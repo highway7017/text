@@ -1,0 +1,194 @@
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f5f3ff;
+  color: #333;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 18px;
+  text-align: center;
+  color: #6c3dc2;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 14px;
+  color: #6b46c1;
+  margin-bottom: 8px;
+  margin-top: 20px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 2px;
+  gap: 2px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 2px;
+  gap: 2px;
+}
+
+.button-group2 {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 2px;
+  gap: 2px;
+}
+
+.button-group3 {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 2px;
+  gap: 2px;
+}
+
+.button-group button {
+  background-color: #7c3aed;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#plus {
+  background-color: #a1a0a1;
+  color: white;
+  border: none;
+  padding: 6px 4px;
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#plus:hover{
+  background-color: #bdbcbd;
+}
+
+#youtube {
+  background-color: #da0000;
+  color: white;
+  border: none;
+  padding: 6px 4px;
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#youtube:hover{
+  background-color: #e07070;
+}
+
+.button-group button:hover {
+  background-color: #a78bfa;
+}
+
+.button-group2 button {
+  background-color: #c616dd;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.button-group2 button:hover {
+  background-color: #e455e9;
+}
+
+.button-group3 button {
+  background-color: #ee65c5;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.button-group3 button:hover {
+  background-color: #f1a5e5;
+}
+
+.item {
+  margin-bottom: 4px;
+}
+
+.item input:hover{
+  border: 1px solid #a78bfa;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
+
+.input-copy-group {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.input-copy-group input {
+  flex: 1;
+  font-size: 11px;
+}
+
+.input-copy-group button {
+  background-color: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.input-copy-group button:hover {
+  background-color: #a78bfa;
+}
+
+.toast {
+  visibility: hidden;
+  min-width: 80px;
+  background-color: #7651c2;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 8px 12px;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+}
