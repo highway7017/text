@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>장기렌트 / 리스 견적 문구 생성기</title>
+
+  <style>
+  :root{
+    --bg:#f5f3ff;
+    --card:#ffffff;
+    --ink:#333;
+    --muted:#6b7280;
+    --primary:#7c3aed;
+    --primary-600:#6c3dc2;
+    --primary-200:#a78bfa;
+    --border:#e5e7eb;
+    --chip:#fafafa;
+    --chip-border:#d1d5db;
+    --shadow:0 6px 20px rgba(17, 12, 34, .08);
+    --radius:12px;
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    padding:12px;
+  }
+
+  h2{
+    font-size:20px;
+    text-align:center;
+    color:var(--primary-600);
+    margin:0;
+    padding:20px 0 12px;
+    letter-spacing:.2px;
+  }
+
+  .container{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+    padding:0 8px 8px;
+  }
+  .form-section,
+  .output-section{
+    width:100%;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:10px;
+    box-sizing:border-box;
+    box-shadow:var(--shadow);
+  }
+
+  label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:6px;
+    font-weight:700;
+    font-size:12px;
+    color:#6b46c1;
+  }
+  select,input{
+    display:block;
+    width:96%;
+    padding:6px 8px;
+    margin-bottom: 5px;
+    font-size:11px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    background:#fff;
+    box-sizing:border-box;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  select:hover,input:hover{ border-color:var(--primary-200); }
+  select:focus,input:focus{
+    outline:0;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(124,58,237,.15);
+  }
+
+  button{
+    padding:8px 12px;
+    margin-bottom:5px;
+    font-size:12px;
+    border:0;
+    border-radius:8px;
+    cursor:pointer;
+    background:var(--primary);
+    color:#fff;
+    transition:transform .02s ease, background .2s ease;
+  }
+  button:hover{ background:var(--primary-200); }
+  button:active{ transform:translateY(1px); }
+
+  .output-controls,
+  .output-controls2{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .output-section .output-controls2 button:nth-child(1){ background:#7c3aed; }
+  .output-section .output-controls2 button:nth-child(2){ background:#a1a0a1; }
+  .output-section .output-controls2 button:nth-child(3){ background:#6c3dc2; }
+  .output-section .output-controls2 button:nth-child(2):hover{ background:#bdbcbd; }
+
+  .section-header{
+    margin-top:18px;
+    margin-bottom:6px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-weight:800;
+    font-size:12px;
+    color:#5b2bb6;
+    background:#f3efff;
+    border:1px solid #e8e3ff;
+    padding:8px 10px;
+    border-radius:8px;
+  }
+  .copy-btn{
+    background:#8b5cf6;
+    padding:6px 10px;
+    border-radius:7px;
+    font-size:11px;
+  }
+  .copy-btn:hover{ background:#a78bfa;}
+
+  .option-group input{ margin-bottom:8px;  }
+
+  .inline-row{ display:block;}
+  .field-col{ width:100%;}
+
+  .quick-box{
+    width:100%;
+    border:1px solid var(--border);
+    background:#fafafa;
+    border-radius:10px;
+    padding:10px;
+    box-shadow:0 3px 10px rgba(17,12,34,.06);
+  }
+  .quick-box .box-title{
+    font-weight:700;
+    font-size:11px;
+    color:#6b46c1;
+    margin-bottom:6px;
+  }
+  .quick-box .quick-list{
+    flex:1;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .quick-item{
+    border:1px solid var(--chip-border);
+    background:#fff;
+    color:#333;
+    border-radius:8px;
+    padding:6px 9px;
+    font-size:11px;
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s, border-color .15s;
+  }
+  .quick-item:hover{
+    background:#f0f0ff;
+    border-color:#c7b8ff;
+  }
+
+  .output-section div[id^="section"]{
+    white-space:break-spaces;
+    font-size:13px;
+    line-height:1.55;
+    color:#222;
+    padding:6px 2px;
+  }
+
+  .hidden{ display:none; }
+
+  @media (max-width: 1100px){
+    .container{ flex-direction:column; }
+    .quick-box{ flex:0 0 35%; max-width:35%; }
+  }
+  @media (max-width: 768px){
+    .inline-row{ flex-direction: column; }
+    .form-section, .output-section{ padding:12px; }
+    select,input{ width:100%; padding:10px 12px; font-size:12px; }
+    .section-header{ font-size:13px; }
+    .copy-btn{ font-size:12px; padding:8px 10px; }
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%) translateY(6px);
+    background: var(--primary, #7c3aed);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    box-shadow: 0 6px 18px rgba(17,12,34,.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: 9999;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  .quick-box { box-sizing: border-box; max-width: 100%; }
+
+  .inline-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .field-col{
+    flex:1 1 auto;
+    min-width:0;
+  }
+
+  /* 탭 스타일 */
+  .tab-bar{
+    display:flex;
+    gap:6px;
+    margin-bottom:8px;
+  }
+  .tab-bar .tab{
+    flex:0 0 auto;
+    padding:6px 12px;
+    font-size:11px;
+    border-radius:999px;
+    border:1px solid #d1d5db;
+    background:#f9fafb;
+    color:#4b5563;
+    cursor:pointer;
+  }
+  .tab-bar .tab.active{
+    background:var(--primary);
+    color:#fff;
+    border-color:var(--primary);
+  }
+
+  /* 비교 기준 버튼 정렬 */
+  #compareModeBox{
+    margin-bottom:16px;
+  }
+  #compareModeBox .quick-list{
+    display:flex !important;
+    justify-content:center;
+    gap:10px;
+  }
+  #compareModeBox .quick-item{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:flex-start;
+    padding:6px 14px;
+    border-radius:999px;
+    white-space:nowrap;
+    gap:6px;
+    width:auto !important;
+    flex:none !important;
+  }
+  #compareModeBox .quick-item input[type="radio"]{
+    margin:0;
+  }
+
+  /* 개월수 비교용 줄 정렬 */
+  #monthSelectBox{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom: 10px;
+  }
+  #monthSelectBox .month-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  #monthSelectBox .month-label{
+    width:60px;
+    font-size:11px;
+    font-weight:600;
+    color:#4b5563;
+    flex:0 0 auto;
+  }
+  #monthSelectBox input[type="text"]{
+    flex:1 1 auto;
+    width:100% !important;
+  }
+  </style>
+</head>
+<body>
+
+  <!-- 숨겨진 템플릿 -->
+  <div class="hidden">
+    <!-- 인사 원본(참고용) -->
+    <div id="인사">안녕하세요.
+차량 장기렌트 문의주셔서
+연락드렸던 송유희매니저 입니다.
+오늘도 남은 시간 건강함 속에
+의미있는 시간 보내시길 바랍니다.
+말씀주신 내용을 바탕으로
+전 렌트사 재차 비교/점검하여
+차량에 대해
+장기렌트 견적서를 송부하오니
+검토있으시면 감사하겠습니다.
+검토시 궁금점, 필요하신 점
+편하신 시간에 언제든
+연락주세요.</div>
+
+    <!-- 장기렌트 계약 템플릿 -->
+    <div id="contract_일반">- 60개월 후 인수/반납/연장 중 선택
+- 보험연령 : 만26세이상
+- 약정주행거리 : 2만km/년
+- 대물한도 : 1억
+- 정비 : 일반형
+- 운전자범위(계약자기준)
+  ㄴ계약자 기준 직계 가족
+  ㄴ개인사업자이실 경우 임직원까지
+  ㄴ추가운전자 2인지정 가능
+  ㄴ면허 취득 1년 이상만 가능
+- 자기과실사고시 면책금 30만원
+- 월렌트료 외 추가투입비용 없음
+  (취등록세/자동차세/보험료 등
+  추가납입 없음)
+- 썬팅/블랙박스 시공 후 고객 인도
+- 사업자 비용처리
+- 만기도래 반납시 감가청구 無</div>
+
+    <div id="contract_KB">- 60개월 후 인수/반납/연장 중 선택
+- 보험연령 : 만26세이상
+- 약정주행거리 : 2만km/년
+- 대물한도 : 1억
+- 정비 : Finance+
+  ㄴ계약기간 중 방문정비를 통한
+   엔진오일 교체 서비스
+- 운전자범위(계약자기준)
+  ㄴ계약자 기준 직계 가족
+  ㄴ개인사업자이실 경우 임직원까지
+  ㄴ추가운전자 2인지정 가능
+  ㄴ면허 취득 1년 이상만 가능
+- 자기과실사고시 면책금 30만원
+- 월렌트료 외 추가투입비용 없음
+  (취등록세/자동차세/보험료 등
+  추가납입 없음)
+- 썬팅/블랙박스 시공 후 고객 인도
+- 사업자 비용처리
+- 만기도래 반납시 감가청구 無</div>
+
+    <div id="contract_메리츠">- 60개월 후 인수/반납/연장 중 선택
+- 약정거리 : 2만km/년
+- 보험연령 : 만26세이상
+- 대물한도 : 1억
+- 정비 : Select 프로모션 혜택
+  ㄴ엔진오일 연 1회
+  ㄴ항균필터 연1회
+  ㄴ와이퍼 연1회
+  ㄴ일반부품교환(전구 등)
+- 운전자범위(계약자기준)
+  ㄴ계약자 기준 직계 가족
+  ㄴ개인사업자일 경우 임직원까지
+  ㄴ추가운전자 2인 지정 가능
+  ㄴ면허 취득 1년 이상만 가능
+- 자기과실사고시 면책금 30만원
+- 썬팅/블랙박스 시공 후 인도
+- 월렌트료 외 추가투입비용 없음
+  (취등록세/자동차세/보험료 등
+  추가납입 없음)
+- 사업자 경비처리 및 부가세처리
+- 만기도래 반납시 감가청구 無</div>
+
+    <div id="contract_롯렌">- 48개월 후 인수/반납/연장 중 선택
+- 매월 렌트료 카드결제 가능
+- 제휴카드 사용시 월렌트료
+  월 최대 ₩30,000 청구할인
+- 보험연령 : 만26세이상
+- 약정주행거리 : 2만km/년
+- 대물한도 : 1억
+- 정비 : IoT실속정비
+  ㄴ엔진오일 방문 교체 서비스/점검
+- 운전자범위(계약자기준)
+  ㄴ본인, 배우자, 자녀,
+  ㄴ부모님, 배우자부모님,
+  ㄴ형제자매, 배우자형제자매
+  ㄴ사위, 며느리
+  ㄴ개인사업자이실 경우 임직원까지
+   (누구나 보험으로 변경 가능)
+- 과실 사고시 면책금 : 30만원
+- 썬팅/블랙박스 시공 후 고객 인도
+- 월렌트료 외 추가투입비용 없음
+  (취등록세/자동차세/보험료 등
+  추가납입 없음)
+- 사업자 비용처리
+- 만기도래 반납시 감가청구 無</div>
+
+    <!-- 리스 계약 템플릿 -->
+    <div id="lease_contract">- 만료시점별 인수/반납 중 선택
+- 약정거리 : 2만km/년
+- 보험연령 : 별도 보험 가입 기준
+- 대물한도 : 별도 보험 가입 기준
+- 정비 : 별도 보험 가입 기준
+- 운전자범위 : 별도 보험 가입 기준
+- 월리스료 外 매년 자동차세납입/
+보험가입 별도
+- 썬팅/블랙박스 시공 후 고객 인도
+- 사업자 비용처리</div>
+
+    <!-- 필요서류 -->
+    <div id="docs_개인">[고객등록 및 승인여부 살펴보기]
+→ 운전면허증(핸드폰본인인증)
+(스캔본 등 파일로 주셔도 되고요,
+사진 찍어 보내 주셔도 됩니다)
+(팩스발송시 0504-296-5280)
+(melody4416@naver.com)</div>
+
+    <div id="docs_개인사업자">[고객등록 및 승인여부 살펴보기]
+→ 운전면허증(핸드폰본인인증)
+  + 사업자등록증
+(스캔본 등 파일로 주셔도 되고요,
+사진 찍어 보내 주셔도 됩니다)
+(팩스발송시 0504-296-5280)
+(melody4416@naver.com)</div>
+
+    <div id="docs_법인">(법인 승인접수 필요서류 안내)
+-사업자등록증
+-법인등기부등본(말소사항포함)
+-표준재무제표증명원(홈텍스/23년,24년)
+-부가세과세표준증명원(홈텍스/최근2년)
+-주주명부(최신날짜기재/법인인감날인)
+-대표님 운전면허증 또는 신분증
+-대표님 본인명의 핸드폰번호
+-스캔본 등 파일로 카톡으로
+보내 주셔도 되고요,
+팩스로 보내 주셔도 됩니다.
+(팩스 발송시 0504-296-5280)
+(melody4416@naver.com)</div>
+
+    <div id="docs_법인_롯렌">
+(법인 승인접수 필요서류 안내)
+-사업자등록증명원
+-법인등기부등본(말소사항포함)
+-표준재무제표증명원(홈텍스/23년,24년)
+-대표님 운전면허증/본인명의 핸드폰번호
+-스캔본 등 파일로 카톡으로
+보내 주셔도 되고요,
+팩스로 보내 주셔도 됩니다.
+(팩스 발송시 0504-296-5280)
+(melody4416@naver.com)
+ㄴ롯데렌트카는 금융사렌트사와 달리
+법인 대표이사님의 연대보증을
+요구하지 않습니다.
+    </div>
+  </div>
+
+  <h2>장기렌트 / 리스 견적 문구 생성기</h2>
+  <div class="container">
+
+    <!-- 왼쪽: 입력 -->
+    <div class="form-section">
+      <label>1. 계약자 유형</label>
+      <select id="customerType">
+        <option value="개인">개인</option>
+        <option value="개인사업자">개인사업자</option>
+        <option value="법인">법인</option>
+      </select>
+
+      <label>2. 렌트사</label>
+      <select id="rentCompany">
+        <option value="일반">일반</option>
+        <option value="KB">KB</option>
+        <option value="메리츠">메리츠</option>
+        <option value="롯렌">롯렌</option>
+      </select>
+
+      <label>3. 차종</label>
+      <input type="text" id="carModel" placeholder="예: 그랜저(H) 1.6 프리미엄">
+
+      <label>3-1. 옵션 입력</label>
+      <div class="inline-row">
+        <div class="field-col">
+          <div id="optionContainer" class="option-group">
+            <input type="text" class="optionInput" placeholder="예: 헤드업디스플레이">
+            <input type="text" class="optionInput" placeholder="예: 파킹어시스트">
+            <input type="text" class="optionInput" placeholder="예: 현대스마트센스1">
+            <input type="text" class="optionInput" placeholder="예: 드라이브와이즈">
+            <input type="text" class="optionInput" placeholder="예: 모니터링팩">
+          </div>
+          <button type="button" onclick="addOptionField()">옵션 추가</button>
+        </div>
+        <div class="quick-box" id="quickOptionsBox">
+          <div class="quick-list">
+            <span class="quick-item" data-value="드라이브와이즈">드라이브와이즈</span>
+            <span class="quick-item" data-value="HUD+빌트인캠2">HUD+빌트인캠2</span>
+            <span class="quick-item" data-value="KRELL프리미엄사운드">KRELL프리미엄사운드</span>
+            <span class="quick-item" data-value="BOSE프리미엄사운드">BOSE프리미엄사운드</span>
+            <span class="quick-item" data-value="모니터링팩">모니터링팩</span>
+            <span class="quick-item" data-value="빌트인캠2Plus,증강현실내비게이션">빌트인캠2Plus,증강현실내비게이션</span>
+          </div>
+        </div>
+      </div>
+
+      <label>3-2. 외장 / 내장 색상</label>
+      <div class="inline-row">
+        <div class="field-col">
+          <input type="text" id="exteriorColor" placeholder="예: 스노우화이트펄">
+          <input type="text" id="interiorColor" placeholder="예: 토프">
+        </div>
+        <div class="quick-box" id="quickColorsBox">
+          <div class="quick-list">
+            <span class="quick-item" data-value="스노우화이트펄">스노우화이트펄</span>
+            <span class="quick-item" data-value="어비스블랙펄">어비스블랙펄</span>
+            <span class="quick-item" data-value="크리미화이트펄">크리미화이트펄</span>
+            <span class="quick-item" data-value="오로라블랙펄">오로라블랙펄</span>
+            <span class="quick-item" data-value="블랙">블랙</span>
+            <span class="quick-item" data-value="올리브브라운">올리브브라운</span>
+            <span class="quick-item" data-value="그레이">그레이</span>
+            <span class="quick-item" data-value="토프">토프</span>
+          </div>
+        </div>
+      </div>
+
+      <label>3-3. 일정</label>
+      <select id="scheduleType">
+        <option value="고객인도일정">고객인도일정</option>
+        <option value="생산예정일정">생산예정일정</option>
+      </select>
+      <input type="text" id="scheduleText" placeholder="예: 7일, 3개월">
+
+      <label>4. 약정 개월</label>
+      <select id="contractMonths">
+        <option value="24">24개월</option>
+        <option value="36">36개월</option>
+        <option value="48">48개월</option>
+        <option value="60" selected>60개월</option>
+      </select>
+
+      <label>5. 약정 운행거리</label>
+      <select id="annualMileage">
+        <option value="10000">1만km</option>
+        <option value="15000">1.5만km</option>
+        <option value="17000">1.7만km</option>
+        <option value="20000" selected>2만km</option>
+        <option value="25000">2.5만km</option>
+        <option value="30000">3만km</option>
+        <option value="35000">3.5만km</option>
+        <option value="40000">4만km</option>
+        <option value="45000">4.5만km</option>
+        <option value="50000">5만km</option>
+        <option value="무제한">무제한</option>
+      </select>
+
+      <label>6. 차량가 (원)</label>
+      <input type="text" id="carPrice" placeholder="예: 54610000">
+
+      <label>7. 초기비용</label>
+      <input type="text" id="deposit" placeholder="보증금 (% 또는 금액)">
+      <input type="text" id="prepay" placeholder="선납금 (% 또는 금액)">
+
+      <!-- 초기비용 기준 금액 입력 -->
+      <div class="cost-fields">
+        <label>8. 무보증 월금액</label>
+        <input type="text" id="noDeposit" placeholder="예: 600000">
+
+        <label>9. 보증금 납부 시 월금액</label>
+        <input type="text" id="depositMonthly" placeholder="예: 500000">
+
+        <label>10. 선납금 납부 시 월금액</label>
+        <input type="text" id="prepayMonthly" placeholder="예: 200000">
+      </div>
+
+      <!-- 비교 기준 선택 -->
+      <label>■ 비교 기준 ■</label>
+      <div class="quick-box" id="compareModeBox">
+        <div class="quick-list">
+          <label class="quick-item">
+            <input type="radio" name="compareMode" value="cost" checked>
+            <span>초기비용 기준</span>
+          </label>
+          <label class="quick-item">
+            <input type="radio" name="compareMode" value="months">
+            <span>개월수 기준</span>
+          </label>
+          <label class="quick-item">
+            <input type="radio" name="compareMode" value="mileage">
+            <span>약정거리 기준</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 개월수 기준 설정 -->
+      <div id="compareMonthsBox" class="hidden">
+        <label>▷ 개월수별 월금액</label>
+        <div class="quick-box" id="monthSelectBox">
+          <div class="month-row">
+            <span class="month-label">36개월</span>
+            <input type="text" id="m36Monthly" placeholder="예: 650000">
+          </div>
+          <div class="month-row">
+            <span class="month-label">48개월</span>
+            <input type="text" id="m48Monthly" placeholder="예: 620000">
+          </div>
+          <div class="month-row">
+            <span class="month-label">60개월</span>
+            <input type="text" id="m60Monthly" placeholder="예: 590000">
+          </div>
+        </div>
+      </div>
+
+      <!-- 약정거리 기준 설정 -->
+      <div id="compareMileageBox" class="hidden">
+        <label>▷ 약정거리 비교 설정</label>
+        <div class="inline-row">
+          <div class="field-col">
+            <select id="k1Mileage">
+              <option value="">거리 선택</option>
+              <option value="10000">1만km/년</option>
+              <option value="15000">1.5만km/년</option>
+              <option value="15000">1.7만km/년</option>
+              <option value="20000">2만km/년</option>
+              <option value="25000">2.5만km/년</option>
+              <option value="30000">3만km/년</option>
+              <option value="40000">4만km/년</option>
+              <option value="45000">4.5만km/년</option>
+              <option value="무제한">무제한</option>
+            </select>
+            <input type="text" id="k1Monthly" placeholder="해당 거리 월금액">
+          </div>
+          <div class="field-col">
+            <select id="k2Mileage">
+              <option value="">거리 선택</option>
+              <option value="10000">1만km/년</option>
+              <option value="15000">1.5만km/년</option>
+              <option value="15000">1.7만km/년</option>
+              <option value="20000">2만km/년</option>
+              <option value="25000">2.5만km/년</option>
+              <option value="30000">3만km/년</option>
+              <option value="40000">4만km/년</option>
+              <option value="45000">4.5만km/년</option>
+              <option value="무제한">무제한</option>
+            </select>
+            <input type="text" id="k2Monthly" placeholder="해당 거리 월금액">
+          </div>
+        </div>
+      </div>
+
+      <div class="output-controls">
+        <button type="button" onclick="generateText()">문구 생성</button>
+        <button type="button" onclick="resetForm()">리셋</button>
+        <button type="button" onclick="copyAll()">전체 복사</button>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 출력 -->
+    <div class="output-section">
+
+      <!-- 탭 -->
+      <div class="tab-bar">
+        <button type="button" class="tab active" data-mode="rent">장기렌트</button>
+        <button type="button" class="tab" data-mode="lease">리스</button>
+      </div>
+
+      <div class="output-controls2">
+        <button type="button" onclick="generateText()">문구 생성</button>
+        <button type="button" onclick="resetForm()">리셋</button>
+        <button type="button" onclick="copyAll()">전체 복사</button>
+      </div>
+
+      <div class="section-header">0. 명함인사 <button class="copy-btn" onclick="copyText('section0')">Copy</button></div>
+      <div id="section0"></div>
+
+      <div class="section-header">1. 월 금액 <button class="copy-btn" onclick="copyText('section1')">Copy</button></div>
+      <div id="section1"></div>
+
+      <div class="section-header">2. 계약 내용 <button class="copy-btn" onclick="copyText('section2')">Copy</button></div>
+      <div id="section2"></div>
+
+      <div class="section-header">3. 필요 서류 <button class="copy-btn" onclick="copyText('section3')">Copy</button></div>
+      <div id="section3"></div>
+
+      <div class="section-header">4. 마무리 인사 <button class="copy-btn" onclick="copyText('section4')">Copy</button></div>
+      <div id="section4"></div>
+
+      <div class="section-header">5. 유튜브 안내(P.S) <button class="copy-btn" onclick="copyText('section5')">Copy</button></div>
+      <div id="section5"></div>
+
+      <div class="section-header">6. 무보증(설명) <button class="copy-btn" onclick="copyText('section6')">Copy</button></div>
+      <div id="section6"></div>
+
+      <div class="section-header">7. 보증금(설명) <button class="copy-btn" onclick="copyText('section7')">Copy</button></div>
+      <div id="section7"></div>
+
+      <div class="section-header">8. 선납금(설명) <button class="copy-btn" onclick="copyText('section8')">Copy</button></div>
+      <div id="section8"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script>
+  let currentMode = 'rent'; // 'rent' or 'lease'
+
+  function showToast(msg, ms = 1400) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove('show'), ms);
+  }
+
+  function formatCurrency(v) {
+    const n = Number(String(v || '').replaceAll(',', ''));
+    if (isNaN(n)) return '0';
+    return n.toLocaleString();
+  }
+  function addOptionField() {
+    const container = document.getElementById('optionContainer');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'optionInput';
+    input.placeholder = '옵션 추가';
+    container.appendChild(input);
+  }
+  function copyText(id) {
+    const el = document.getElementById(id);
+    if (!el) { showToast('복사할 영역이 없습니다.'); return; }
+    const text = el.innerText || '';
+    if (!text.trim()) { showToast('복사할 문구가 없습니다.'); return; }
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('복사되었습니다!'))
+      .catch(() => showToast('복사 중 오류가 발생했습니다.'));
+  }
+  function getCarShortName(full) {
+    const s = String(full || '');
+    const i = s.indexOf('(');
+    return (i > -1 ? s.slice(0, i) : s).trim();
+  }
+  function applyContractTemplate(tpl, months, mileageLine) {
+    if (!tpl) return '';
+    let t = String(tpl || '').replace(/\r\n/g, '\n');
+    const choiceText = String(months) === '60'
+      ? '인수/반납 중 선택'
+      : '인수/반납/연장 중 선택';
+    t = t.replace(/^\s*[-•]?\s*\d+\s*개월\s*후\s*인수\/반납(?:\/연장)?\s*중\s*선택.*$/m,
+                  `- ${months}개월 후 ${choiceText}`);
+    t = t.replace(/^\s*[-•]?\s*약정(주행거리|거리)\s*:\s*.*$/m,
+                  `- 약정주행거리 : ${mileageLine}`);
+    return t;
+  }
+  function overrideDriverScopeForCorp(tplText){
+    let t = String(tplText || '').replace(/\r\n/g, '\n');
+    const re = /^\s*-\s*운전자범위[^\n]*\n(?:^(?!\s*-\s).*(?:\n|$))*/m;
+    if (re.test(t)) {
+      t = t.replace(re, `- 운전자범위\n   ㄴ법인 임직원 한정\n`);
+    } else {
+      t = t.replace(/\s*$/, `\n- 운전자범위\n   ㄴ법인 임직원 한정\n`);
+    }
+    return t;
+  }
+
+  function setValue(el, text) {
+    if (!el) return;
+    el.value = text;
+    el.focus();
+    const len = el.value.length;
+    el.setSelectionRange?.(len, len);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function getCompareMode() {
+    const checked = document.querySelector('input[name="compareMode"]:checked');
+    return checked ? checked.value : 'cost';
+  }
+
+  function mileageLabel(val) {
+    if (!val) return '';
+    if (val === '무제한') return '무제한';
+    const n = Number(val);
+    if (!isNaN(n) && n >= 1000) {
+      return (n / 10000) + '만km/년';
+    }
+    return val;
+  }
+
+  function generateText() {
+    const customerType = document.getElementById('customerType')?.value ?? '개인';
+    const rentCompany  = document.getElementById('rentCompany')?.value ?? '일반';
+
+    const carModel = document.getElementById('carModel').value || '';
+    const carShort = getCarShortName(carModel) || '차량';
+
+    const exterior = document.getElementById('exteriorColor').value || '색상 선택';
+    const interior = document.getElementById('interiorColor').value || '색상 선택';
+    const scheduleType = document.getElementById('scheduleType').value;
+    const scheduleText = document.getElementById('scheduleText').value || '2주내외';
+
+    const contractMonths = document.getElementById('contractMonths').value;
+    const mileageEl = document.getElementById('annualMileage');
+    const mileageText = mileageEl.selectedOptions[0].text; // ex) '2만km'
+    const mileageLine = mileageText.includes('km') ? `${mileageText}/년` : mileageText;
+
+    const carPrice = Number((document.getElementById('carPrice').value || '0').replaceAll(',', '')) || 0;
+
+    const depositLabel = (document.getElementById('deposit').value || '').trim();
+    const prepayLabel  = (document.getElementById('prepay').value  || '').trim();
+
+    const noDepositMonthly = (document.getElementById('noDeposit').value || '').trim();
+    const depositMonthly   = (document.getElementById('depositMonthly').value || '').trim();
+    const prepayMonthly    = (document.getElementById('prepayMonthly').value || '').trim();
+
+    const compareMode = getCompareMode();
+
+    // 옵션
+    const optionInputs = document.querySelectorAll('.optionInput');
+    let optionLines = '';
+    optionInputs.forEach(opt => {
+      const val = (opt.value || '').trim();
+      if (val) optionLines += ` + ${val}<br>`;
+    });
+
+    // 0. 인사
+    document.getElementById('section0').innerHTML =
+`안녕하세요.
+${carShort} ${currentMode === 'lease' ? '리스' : '장기렌트'} 문의주셔서
+연락드렸던 송유희매니저 입니다.
+오늘도 남은 시간 건강함 속에
+의미있는 시간 보내시길 바랍니다.
+말씀주신 내용을 바탕으로
+전 렌트사 재차 비교/점검하여
+${carShort} 차량에 대해
+${currentMode === 'lease' ? '리스' : '장기렌트'} 견적서를 송부하오니
+검토있으시면 감사하겠습니다.
+검토시 궁금점, 필요하신 점
+편하신 시간에 언제든
+연락주세요.`;
+
+    // 1. 월 금액
+    const section1Header =
+      `${carModel || '(차종 미입력)'}<br>` +
+      `${optionLines}` +
+      `= ${formatCurrency(carPrice)}원<br>` +
+      `(외장_${exterior})<br>(내장_${interior})<br>` +
+      `(${scheduleType} 약 ${scheduleText}내외)`;
+
+    const blocks = [];
+    const labelWord = (currentMode === 'lease') ? '월리스료' : '월렌트료';
+    const taxNote   = (currentMode === 'lease') ? '' : '(부가세포함)';
+
+    if (compareMode === 'cost') {
+      if (noDepositMonthly) {
+        blocks.push(
+          `\n\n<${contractMonths}개월 초기비용 0원 진행시>\n` +
+          `${labelWord} ₩${formatCurrency(noDepositMonthly)}${taxNote}`
+        );
+      }
+      if (depositLabel && depositMonthly) {
+        blocks.push(
+          `\n\n<${contractMonths}개월 보증금 ${depositLabel} 진행시>\n` +
+          `${labelWord} ₩${formatCurrency(depositMonthly)}${taxNote}`
+        );
+      }
+      if (prepayLabel && prepayMonthly) {
+        blocks.push(
+          `\n\n<${contractMonths}개월 선납금 ${prepayLabel} 진행시>\n` +
+          `${labelWord} ₩${formatCurrency(prepayMonthly)}${taxNote}`
+        );
+      }
+    } else if (compareMode === 'months') {
+      const m36 = (document.getElementById('m36Monthly').value || '').trim();
+      const m48 = (document.getElementById('m48Monthly').value || '').trim();
+      const m60 = (document.getElementById('m60Monthly').value || '').trim();
+
+      if (m36) {
+        blocks.push(
+          `\n\n<36개월 초기비용 0원 진행시>\n` +
+          `${labelWord} ₩${formatCurrency(m36)}${taxNote}`
+        );
+      }
+      if (m48) {
+        blocks.push(
+          `\n\n<48개월 초기비용 0원 진행시>\n` +
+          `${labelWord} ₩${formatCurrency(m48)}${taxNote}`
+        );
+      }
+      if (m60) {
+        blocks.push(
+          `\n\n<60개월 초기비용 0원 진행시>\n` +
+          `${labelWord} ₩${formatCurrency(m60)}${taxNote}`
+        );
+      }
+    } else if (compareMode === 'mileage') {
+      const k1Val = document.getElementById('k1Mileage').value;
+      const k1Txt = mileageLabel(k1Val);
+      const k1Fee = (document.getElementById('k1Monthly').value || '').trim();
+
+      const k2Val = document.getElementById('k2Mileage').value;
+      const k2Txt = mileageLabel(k2Val);
+      const k2Fee = (document.getElementById('k2Monthly').value || '').trim();
+
+      if (k1Txt && k1Fee) {
+        blocks.push(
+          `\n\n<${contractMonths}개월, ${k1Txt} 기준>\n` +
+          `${labelWord} ₩${formatCurrency(k1Fee)}${taxNote}`
+        );
+      }
+      if (k2Txt && k2Fee) {
+        blocks.push(
+          `\n\n<${contractMonths}개월, ${k2Txt} 기준>\n` +
+          `${labelWord} ₩${formatCurrency(k2Fee)}${taxNote}`
+        );
+      }
+    }
+
+    const section1HTML = (section1Header + blocks.join('')).replaceAll('\n', '<br>');
+    document.getElementById('section1').innerHTML = section1HTML;
+
+    // 2. 계약 내용
+    if (currentMode === 'rent') {
+      const contractEl = document.getElementById('contract_' + rentCompany);
+      let contractTpl = contractEl ? (contractEl.textContent || '').trim() : '';
+      let replaced = applyContractTemplate(contractTpl, contractMonths, mileageLine);
+      if (customerType === '법인') {
+        replaced = overrideDriverScopeForCorp(replaced);
+      }
+      document.getElementById('section2').innerHTML = replaced.replace(/\n/g, '<br>');
+    } else {
+      const leaseEl = document.getElementById('lease_contract');
+      let leaseTpl = leaseEl ? (leaseEl.textContent || '').trim() : '';
+      leaseTpl = leaseTpl.replace(
+        /^\s*[-•]?\s*약정거리\s*:\s*.*$/m,
+        `- 약정거리 : ${mileageLine}`
+      );
+      document.getElementById('section2').innerHTML = leaseTpl.replace(/\n/g, '<br>');
+    }
+
+    // 3. 필요 서류
+    let docsText = '';
+    if (customerType === '법인' && rentCompany === '롯렌') {
+      const d = document.getElementById('docs_법인_롯렌');
+      docsText = (d?.textContent || '').trim();
+    } else if (customerType === '법인') {
+      const d = document.getElementById('docs_법인');
+      docsText = (d?.textContent || '').trim();
+    } else {
+      const d = document.getElementById('docs_' + customerType);
+      docsText = (d?.textContent || '').trim();
+    }
+    document.getElementById('section3').innerHTML = docsText.replace(/\n/g, '<br>');
+
+    // 4. 마무리 인사
+    document.getElementById('section4').innerHTML =
+`검토시 궁금점 등 필요하신점
+편하실때 언제든 연락주세요.
+좋은 인연으로 끝까지
+최선을 다하겠습니다.
+감사합니다.
+[(주)알차다 송유희매니저올림]
+010-2366-5280`;
+
+    // 5. 유튜브 P.S (개인·개인사업자만)
+    if (customerType === '개인' || customerType === '개인사업자') {
+      document.getElementById('section5').innerHTML =
+`(P.S)
+제가 운전할 때 듣는 음악들을 직접 제작해 유튜브 채널에 올려두었습니다.
+혹시 장거리 운전하시거나 작업 중에 편하게 들으실 일이 있으시면 가볍게 참고해 주세요. 😄
+▶️ https://www.youtube.com/@고속도로드라이브`;
+    } else {
+      document.getElementById('section5').innerHTML = '';
+    }
+
+    // 6~8. 설명
+    document.getElementById('section6').innerHTML =
+`(P.S)
+초기비용 0원 - 월${currentMode === 'lease' ? '리스료' : '렌트료'}는 많지만
+초기비용 최소화를 원하시는
+고객분들께서 선택하십니다.`;
+
+    document.getElementById('section7').innerHTML =
+`(보증금)
+차량가액의 일정액을
+보증금 형태로 납입해 놓는
+방식 입니다.
+따라서 약정기간 만료후
+반납받게 되십니다.
+초기비용 0원으로
+진행시 보다 년5.5% 내외의
+이자효과 만큼 월${currentMode === 'lease' ? '리스료' : '렌트료'}
+인하효과가 있습니다.
+자금의 여유가 쫌 있으시거나
+향후 차량 인수까지도
+생각하시는 고객분들께서
+선택을 하시게 됩니다.`;
+
+    document.getElementById('section8').innerHTML =
+`(선납금)
+차량가액기준 일정액을
+선납대여료로 납입하는
+방식 입니다.
+따라서 약정기간 만료후
+반납되는 금액은 없습니다.
+월납입 ${currentMode === 'lease' ? '리스료' : '렌트료'}를 낮추어
+이용하시고자 하시는
+고객분들께서
+선택을 하시게 됩니다.`;
+  }
+
+  function copyAll() {
+    const output = document.querySelector('.output-section');
+    if (!output) { showToast('출력 영역이 없습니다.'); return; }
+    const parts = [];
+    output.querySelectorAll('div[id^="section"]').forEach(bodyEl => {
+      const text = (bodyEl.innerText || '').trim();
+      if (text) parts.push(text);
+    });
+    const text = parts.join('\n\n');
+    if (!text) { showToast('복사할 문구가 없습니다. 먼저 문구를 생성하세요.'); return; }
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('전체 문구를 복사했습니다!'))
+      .catch(() => showToast('복사 중 오류가 발생했습니다.'));
+  }
+
+  function wireQuickBoxes() {
+    const ext = document.getElementById('exteriorColor');
+    const int = document.getElementById('interiorColor');
+    const optContainer = document.getElementById('optionContainer');
+    const colorsBox = document.getElementById('quickColorsBox');
+    const optionsBox = document.getElementById('quickOptionsBox');
+
+    if (!colorsBox && !optionsBox) return;
+
+    let focusedColor = null;
+    ext?.addEventListener('focus', () => { focusedColor = ext; });
+    int?.addEventListener('focus', () => { focusedColor = int; });
+
+    let focusedOption = null;
+    optContainer?.addEventListener('focusin', (e) => {
+      if (e.target.classList?.contains('optionInput')) {
+        focusedOption = e.target;
+      }
+    });
+
+    colorsBox?.addEventListener('click', (e) => {
+      const item = e.target.closest('.quick-item');
+      if (!item) return;
+      const value = item.dataset.value || item.textContent.trim();
+      let target = null;
+      const active = document.activeElement;
+      if (active && (active === ext || active === int)) target = active;
+      else target = focusedColor || ext || int;
+      if (!target) { showToast('먼저 외장/내장 색상 입력 칸을 클릭하세요.'); return; }
+      setValue(target, value);
+    });
+
+    optionsBox?.addEventListener('click', (e) => {
+      const item = e.target.closest('.quick-item');
+      if (!item) return;
+      const value = item.dataset.value || item.textContent.trim();
+      let target = null;
+      const active = document.activeElement;
+      if (active?.classList?.contains('optionInput')) target = active;
+      else if (focusedOption) target = focusedOption;
+      else {
+        const inputs = Array.from(document.querySelectorAll('.optionInput'));
+        target = inputs[inputs.length - 1] || null;
+        if (!target) {
+          addOptionField();
+          target = document.querySelector('.optionInput:last-of-type');
+        }
+      }
+      setValue(target, value);
+    });
+  }
+
+  function resetForm() {
+    document.querySelectorAll('.form-section input').forEach(i => i.value = '');
+    document.querySelectorAll('.form-section select').forEach(s => s.selectedIndex = 0);
+    document.querySelectorAll('.output-section div[id^="section"]').forEach(div => div.innerHTML = '');
+
+    // 비교 기준 초기화
+    const costRadio = document.querySelector('input[name="compareMode"][value="cost"]');
+    if (costRadio) costRadio.checked = true;
+    setupCompareModeUI();
+  }
+
+  function attachCommaFormat() {
+    const inputs = document.querySelectorAll('input[type="text"]');
+    inputs.forEach(input => {
+      input.addEventListener("input", function () {
+        const rawNoComma = this.value.replace(/,/g, "");
+        if (/^[0-9]+$/.test(rawNoComma)) {
+          this.value = Number(rawNoComma) >= 1000
+            ? Number(rawNoComma).toLocaleString()
+            : rawNoComma;
+        }
+      });
+    });
+  }
+
+  function setupTabs() {
+    const tabs = document.querySelectorAll('.tab-bar .tab');
+    if (!tabs.length) return;
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentMode = tab.dataset.mode || 'rent';
+        generateText();
+      });
+    });
+  }
+
+  function setupCompareModeUI() {
+    const costBox    = document.querySelector('.cost-fields');
+    const monthsBox  = document.getElementById('compareMonthsBox');
+    const mileageBox = document.getElementById('compareMileageBox');
+    const radios     = document.querySelectorAll('input[name="compareMode"]');
+
+    function applyMode() {
+      const mode = getCompareMode();
+      costBox?.classList.toggle('hidden', mode !== 'cost');
+      monthsBox?.classList.toggle('hidden', mode !== 'months');
+      mileageBox?.classList.toggle('hidden', mode !== 'mileage');
+    }
+
+    radios.forEach(r => r.addEventListener('change', applyMode));
+    applyMode();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    wireQuickBoxes();
+    attachCommaFormat();
+    setupTabs();
+    setupCompareModeUI();
+  });
+  </script>
+</body>
+</html>
