@@ -333,3 +333,63 @@ button:hover{
   transform: translateX(-50%) translateY(0);
 }
 
+
+/* =========================
+   모바일 전용 UI (PC는 기존 유지)
+   ========================= */
+@media (max-width: 600px){
+
+  body{
+    padding: 14px !important;
+    font-size: 16px;
+  }
+
+  h1{
+    font-size: 22px !important;
+    margin: 10px 0 14px !important;
+  }
+
+  .section{
+    padding: 14px !important;
+    border-radius: 16px !important;
+  }
+
+  /* 버튼 그룹: 모바일에서 2열 그리드 */
+  .button-group,
+  .button-group2{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* 버튼 크게 */
+  button{
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 14px 12px !important;
+    font-size: 16px !important;
+    border-radius: 14px !important;
+    line-height: 1.1 !important;
+  }
+
+  /* 입력창도 크게 */
+  .item input[type="text"]{
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 14px 14px !important;
+    font-size: 16px !important;
+    border-radius: 14px !important;
+  }
+
+  /* 토스트: 모바일 하단 중앙 */
+  .toast{
+    left: 50% !important;
+    bottom: 16px !important;
+    transform: translateX(-50%) translateY(20px) !important;
+  }
+  .toast.show{
+    transform: translateX(-50%) translateY(0) !important;
+  }
+}
+
