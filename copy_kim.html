@@ -2,7 +2,6 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>복사 도우미</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -868,6 +867,17 @@ https://www.lottecard.co.kr/app/LPCDADB_V100.lc?vtCdKndC=P14114-A14114</div>
     }
   };
 </script>
+
+<script>
+  (function () {
+    const isMobile =
+      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+
+    if (isMobile) document.documentElement.classList.add("is-mobile");
+  })();
+</script>
+
 
 </body>
 </html>
