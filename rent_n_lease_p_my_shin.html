@@ -328,6 +328,30 @@
 }
 .sms-top-btn:hover{ background:var(--primary-200); }
 .sms-top-btn:active{ transform:translateY(1px); }
+
+/* 상단 버튼 2개 묶음 */
+.top-btns{
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 고센번호 버튼 (문자 버튼과 톤 맞춤) */
+.cs-top-btn{
+  flex:0 0 auto;
+  padding:8px 18px;
+  font-size:14px;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+  background:#e65fda;   /* 연보라 */
+  color:#fff;
+  white-space:nowrap;
+}
+.cs-top-btn:hover{ background:#fda3f6; }
+.cs-top-btn:active{ transform:translateY(1px); }
+
   </style>
 </head>
 <body>
@@ -495,6 +519,7 @@
 
   <div class="page-header">
   <h2>장기렌트 / 리스 견적 문구 생성기</h2>
+  <button type="button" class="cs-top-btn" onclick="openCsPopup()">고센번호</button>
   <button type="button" class="sms-top-btn" onclick="openCopyPopup()">문자</button>
 </div>
   <div class="container">
@@ -1176,6 +1201,26 @@ ${currentMode === 'lease' ? '리스' : '장기렌트'} 견적서를 송부하오
     'copyPopup',
     `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
   );
+  function openCsPopup(){
+  const w = 500, h = 280;
+
+  // 멀티모니터/확대율 고려해서 화면 중앙 계산
+  const dualScreenLeft = window.screenLeft ?? window.screenX ?? 0;
+  const dualScreenTop  = window.screenTop  ?? window.screenY ?? 0;
+
+  const width  = window.innerWidth  ?? document.documentElement.clientWidth  ?? screen.width;
+  const height = window.innerHeight ?? document.documentElement.clientHeight ?? screen.height;
+
+  const left = Math.max(0, Math.round(dualScreenLeft + (width  - w) / 2));
+  const top  = Math.max(0, Math.round(dualScreenTop  + (height - h) / 2));
+
+  window.open(
+    'cs_shin.html',
+    'csPopup',
+    `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
+  );
+}
+
 }
 
   </script>

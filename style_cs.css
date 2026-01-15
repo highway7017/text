@@ -1,0 +1,80 @@
+:root{
+  --bg:#f5f3ff;
+  --card:#7c3aed;        /* 연보라 */
+  --ink:#ffffff;         /* 보라 계열 텍스트 */
+  --muted:#6b5fb5;
+  --border:#dcd7fe;
+  --primary:#7c3aed;
+  --shadow:0 4px 10px rgba(60, 30, 120, .12);
+  --radius:12px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, "Noto Sans KR", "Malgun Gothic", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.top{
+  padding: 14px 12px 6px;
+}
+h1{margin:0; font-size:16px; color:#6c3dc2;}
+.sub{margin:4px 0 0; color: var(--muted); font-size:11px}
+
+.wrap{
+  padding: 8px 10px 14px;
+  overflow-x: hidden;
+}
+
+/* 🔹 200px 폭 대응 */
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+
+/* 🔹 컴팩트 버튼 */
+.btn{
+  width:100%;
+  padding: 6px 2px;          /* ↓ 세로·가로 축소 */
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  cursor:pointer;
+
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  transition: background .1s ease, transform .08s ease;
+  min-width: 0;
+}
+
+.btn:hover{
+  background:#e0d7ff;
+  transform: translateY(-1px);
+}
+.btn:active{
+  background:#d6cbff;
+  transform: translateY(0);
+}
+
+/* 🔹 복사 완료 메시지 */
+.toast{
+  margin-top: 8px;
+  min-height: 16px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary);
+  text-align: center;
+}
